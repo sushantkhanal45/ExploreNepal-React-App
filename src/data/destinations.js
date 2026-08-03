@@ -38,7 +38,7 @@ const destinations = [
     category: "Nature",
     location: "Kaski District",
     image:
-  "https://images.pexels.com/photos/14989387/pexels-photo-14989387.jpeg?auto=compress&cs=tinysrgb&w=1400",
+      "https://images.pexels.com/photos/14989387/pexels-photo-14989387.jpeg?auto=compress&cs=tinysrgb&w=1400",
     shortDescription:
       "Enjoy peaceful lakes, mountain views, adventure activities, and beautiful sunsets.",
     description:
@@ -68,8 +68,8 @@ const destinations = [
     region: "Lumbini",
     category: "Spiritual",
     location: "Rupandehi District",
-   image:
-  "https://images.pexels.com/photos/7331531/pexels-photo-7331531.jpeg?auto=compress&cs=tinysrgb&w=1400",
+    image:
+      "https://images.pexels.com/photos/7331531/pexels-photo-7331531.jpeg?auto=compress&cs=tinysrgb&w=1400",
     shortDescription:
       "Visit the birthplace of Lord Buddha and explore peaceful monasteries and sacred sites.",
     description:

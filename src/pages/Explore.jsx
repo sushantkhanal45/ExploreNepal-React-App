@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+
 import {
   Compass,
   Search,
@@ -8,6 +9,7 @@ import {
 
 import destinations from "../data/destinations";
 import DestinationCard from "../components/DestinationCard";
+import Footer from "../components/Footer";
 
 function Explore() {
   const [searchTerm, setSearchTerm] =
@@ -29,16 +31,24 @@ function Explore() {
   const filteredDestinations = useMemo(() => {
     return destinations.filter(
       (destination) => {
+        const searchValue =
+          searchTerm.toLowerCase();
+
         const matchesSearch =
           destination.name
             .toLowerCase()
             .includes(
-              searchTerm.toLowerCase()
+              searchValue
             ) ||
           destination.location
             .toLowerCase()
             .includes(
-              searchTerm.toLowerCase()
+              searchValue
+            ) ||
+          destination.category
+            .toLowerCase()
+            .includes(
+              searchValue
             );
 
         const matchesCategory =
@@ -62,6 +72,10 @@ function Explore() {
     setSelectedCategory("All");
   };
 
+  const hasActiveFilters =
+    searchTerm.trim() !== "" ||
+    selectedCategory !== "All";
+
   return (
     <main
       className="
@@ -82,6 +96,7 @@ function Explore() {
           py-16
           dark:border-white/10
           dark:bg-slate-900
+          sm:py-20
           lg:px-8
         "
       >
@@ -119,6 +134,7 @@ function Explore() {
             "
           >
             Find your next
+
             <span className="block text-orange-500">
               adventure.
             </span>
@@ -143,8 +159,16 @@ function Explore() {
       </section>
 
       {/* Search and filters */}
-      <section className="px-5 py-10 lg:px-8">
+      <section
+        className="
+          px-5
+          py-10
+          sm:py-14
+          lg:px-8
+        "
+      >
         <div className="mx-auto max-w-7xl">
+          {/* Search and category area */}
           <div
             className="
               rounded-[1.75rem]
@@ -153,6 +177,8 @@ function Explore() {
               bg-white
               p-5
               shadow-sm
+              transition-colors
+              duration-300
               dark:border-white/10
               dark:bg-slate-900
               sm:p-7
@@ -167,7 +193,7 @@ function Explore() {
                 lg:items-center
               "
             >
-              {/* Search */}
+              {/* Search input */}
               <div className="relative flex-1">
                 <Search
                   size={20}
@@ -189,6 +215,7 @@ function Explore() {
                     )
                   }
                   placeholder="Search Kathmandu, Pokhara, Lumbini..."
+                  aria-label="Search destinations"
                   className="
                     w-full
                     rounded-2xl
@@ -224,8 +251,13 @@ function Explore() {
                       right-4
                       top-1/2
                       -translate-y-1/2
+                      rounded-full
+                      p-1
                       text-slate-400
+                      transition
+                      hover:bg-orange-100
                       hover:text-orange-500
+                      dark:hover:bg-orange-500/10
                     "
                   >
                     <X size={18} />
@@ -233,10 +265,11 @@ function Explore() {
                 )}
               </div>
 
-              {/* Filter label */}
+              {/* Category title */}
               <div
                 className="
                   flex
+                  shrink-0
                   items-center
                   gap-2
                   text-sm
@@ -247,6 +280,7 @@ function Explore() {
               >
                 <SlidersHorizontal
                   size={18}
+                  className="text-orange-500"
                 />
 
                 Categories
@@ -278,7 +312,10 @@ function Explore() {
                       py-2.5
                       text-sm
                       font-semibold
-                      transition
+                      transition-all
+                      duration-300
+                      hover:-translate-y-0.5
+
                       ${
                         selectedCategory ===
                         category
@@ -308,14 +345,16 @@ function Explore() {
             </div>
           </div>
 
-          {/* Results */}
+          {/* Results heading */}
           <div
             className="
               mt-10
               flex
-              items-center
-              justify-between
+              flex-col
               gap-5
+              sm:flex-row
+              sm:items-center
+              sm:justify-between
             "
           >
             <div>
@@ -327,7 +366,9 @@ function Explore() {
                   dark:text-slate-400
                 "
               >
-                Showing
+                {hasActiveFilters
+                  ? "Filtered results"
+                  : "All destinations"}
               </p>
 
               <h2
@@ -340,32 +381,42 @@ function Explore() {
                 "
               >
                 {filteredDestinations.length}{" "}
-                destinations
+                {filteredDestinations.length ===
+                1
+                  ? "destination"
+                  : "destinations"}
               </h2>
             </div>
 
-            {(searchTerm ||
-              selectedCategory !==
-                "All") && (
+            {hasActiveFilters && (
               <button
                 type="button"
                 onClick={clearFilters}
                 className="
+                  inline-flex
+                  w-fit
+                  items-center
+                  justify-center
+                  gap-2
                   rounded-full
                   border
                   border-slate-200
+                  bg-white
                   px-5
                   py-2.5
                   text-sm
                   font-bold
                   text-slate-600
-                  transition
+                  transition-all
                   hover:border-orange-300
                   hover:text-orange-500
                   dark:border-white/10
+                  dark:bg-white/5
                   dark:text-slate-300
                 "
               >
+                <X size={17} />
+
                 Clear filters
               </button>
             )}
@@ -410,17 +461,26 @@ function Explore() {
                 dark:bg-white/5
               "
             >
-              <Search
-                size={42}
+              <div
                 className="
                   mx-auto
+                  flex
+                  h-16
+                  w-16
+                  items-center
+                  justify-center
+                  rounded-2xl
+                  bg-orange-100
                   text-orange-500
+                  dark:bg-orange-500/10
                 "
-              />
+              >
+                <Search size={30} />
+              </div>
 
               <h3
                 className="
-                  mt-5
+                  mt-6
                   text-2xl
                   font-black
                   text-slate-950
@@ -432,20 +492,24 @@ function Explore() {
 
               <p
                 className="
+                  mx-auto
                   mt-3
+                  max-w-md
+                  leading-7
                   text-slate-500
                   dark:text-slate-400
                 "
               >
-                Try another destination
-                name or category.
+                We could not find a
+                destination matching your
+                search or selected category.
               </p>
 
               <button
                 type="button"
                 onClick={clearFilters}
                 className="
-                  mt-6
+                  mt-7
                   rounded-full
                   bg-orange-500
                   px-6
@@ -453,7 +517,10 @@ function Explore() {
                   text-sm
                   font-bold
                   text-white
-                  transition
+                  shadow-lg
+                  shadow-orange-500/20
+                  transition-all
+                  hover:-translate-y-0.5
                   hover:bg-orange-400
                 "
               >
@@ -463,6 +530,9 @@ function Explore() {
           )}
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }

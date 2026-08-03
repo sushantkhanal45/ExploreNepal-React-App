@@ -1,143 +1,71 @@
-const WEATHER_URL =
-  "https://api.open-meteo.com/v1/forecast";
+const API_KEY =
+  import.meta.env.VITE_OPENWEATHER_API_KEY;
+
+const BASE_URL =
+  "https://api.openweathermap.org/data/2.5/weather";
 
 export async function getWeather(
   latitude,
   longitude
 ) {
+  if (!API_KEY) {
+    throw new Error(
+      "OpenWeather API key is missing."
+    );
+  }
+
+  if (
+    latitude === undefined ||
+    longitude === undefined
+  ) {
+    throw new Error(
+      "Destination coordinates are missing."
+    );
+  }
+
   const url =
-    `${WEATHER_URL}` +
-    `?latitude=${latitude}` +
-    `&longitude=${longitude}` +
-    `&current=` +
-    `temperature_2m,` +
-    `apparent_temperature,` +
-    `relative_humidity_2m,` +
-    `weather_code,` +
-    `wind_speed_10m` +
-    `&timezone=auto`;
+    `${BASE_URL}` +
+    `?lat=${latitude}` +
+    `&lon=${longitude}` +
+    `&units=metric` +
+    `&appid=${API_KEY}`;
 
   const response =
     await fetch(url);
 
+  const data =
+    await response.json();
+
   if (!response.ok) {
     throw new Error(
+      data.message ||
       "Unable to load weather data."
     );
   }
 
-  const data =
-    await response.json();
+  return {
+    temperature:
+      data.main.temp,
 
-  return data.current;
-}
+    feelsLike:
+      data.main.feels_like,
 
-export function getWeatherInfo(
-  weatherCode
-) {
-  const weatherCodes = {
-    0: {
-      label: "Clear sky",
-      icon: "☀️",
-    },
+    humidity:
+      data.main.humidity,
 
-    1: {
-      label: "Mainly clear",
-      icon: "🌤️",
-    },
+    windSpeed:
+      data.wind.speed,
 
-    2: {
-      label: "Partly cloudy",
-      icon: "⛅",
-    },
+    condition:
+      data.weather[0].main,
 
-    3: {
-      label: "Overcast",
-      icon: "☁️",
-    },
+    description:
+      data.weather[0].description,
 
-    45: {
-      label: "Foggy",
-      icon: "🌫️",
-    },
+    icon:
+      data.weather[0].icon,
 
-    48: {
-      label: "Rime fog",
-      icon: "🌫️",
-    },
-
-    51: {
-      label: "Light drizzle",
-      icon: "🌦️",
-    },
-
-    53: {
-      label: "Moderate drizzle",
-      icon: "🌦️",
-    },
-
-    55: {
-      label: "Heavy drizzle",
-      icon: "🌧️",
-    },
-
-    61: {
-      label: "Light rain",
-      icon: "🌦️",
-    },
-
-    63: {
-      label: "Moderate rain",
-      icon: "🌧️",
-    },
-
-    65: {
-      label: "Heavy rain",
-      icon: "🌧️",
-    },
-
-    71: {
-      label: "Light snow",
-      icon: "🌨️",
-    },
-
-    73: {
-      label: "Moderate snow",
-      icon: "🌨️",
-    },
-
-    75: {
-      label: "Heavy snow",
-      icon: "❄️",
-    },
-
-    80: {
-      label: "Rain showers",
-      icon: "🌦️",
-    },
-
-    81: {
-      label: "Moderate showers",
-      icon: "🌧️",
-    },
-
-    82: {
-      label: "Heavy showers",
-      icon: "⛈️",
-    },
-
-    95: {
-      label: "Thunderstorm",
-      icon: "⛈️",
-    },
+    location:
+      data.name,
   };
-
-  return (
-    weatherCodes[
-      weatherCode
-    ] || {
-      label: "Weather unavailable",
-      icon: "🌤️",
-    }
-  );
 }

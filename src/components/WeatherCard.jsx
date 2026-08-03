@@ -12,7 +12,6 @@ import {
 
 import {
   getWeather,
-  getWeatherInfo,
 } from "../services/weatherApi";
 
 function WeatherCard({
@@ -35,17 +34,18 @@ function WeatherCard({
         setLoading(true);
         setError("");
 
-        const currentWeather =
+        const weatherData =
           await getWeather(
             latitude,
             longitude
           );
 
         setWeather(
-          currentWeather
+          weatherData
         );
       } catch (error) {
         setError(
+          error.message ||
           "Weather data is unavailable."
         );
       } finally {
@@ -63,7 +63,7 @@ function WeatherCard({
     return (
       <div
         className="
-          mt-8
+          mt-6
           animate-pulse
           rounded-[2rem]
           bg-slate-200
@@ -74,7 +74,7 @@ function WeatherCard({
         <div
           className="
             h-5
-            w-32
+            w-36
             rounded
             bg-slate-300
             dark:bg-white/10
@@ -99,20 +99,31 @@ function WeatherCard({
     return (
       <div
         className="
-          mt-8
+          mt-6
           rounded-[2rem]
           border
-          border-orange-200
-          bg-orange-50
+          border-red-200
+          bg-red-50
           p-6
-          dark:border-orange-500/20
-          dark:bg-orange-500/5
+          dark:border-red-500/20
+          dark:bg-red-500/5
         "
       >
         <p
           className="
-            font-semibold
-            text-orange-600
+            font-bold
+            text-red-600
+            dark:text-red-400
+          "
+        >
+          Weather unavailable
+        </p>
+
+        <p
+          className="
+            mt-2
+            text-sm
+            text-red-500
           "
         >
           {error}
@@ -121,15 +132,13 @@ function WeatherCard({
     );
   }
 
-  const weatherInfo =
-    getWeatherInfo(
-      weather.weather_code
-    );
+  const weatherIconUrl =
+    `https://openweathermap.org/img/wn/${weather.icon}@2x.png`;
 
   return (
     <section
       className="
-        mt-8
+        mt-6
         overflow-hidden
         rounded-[2rem]
         bg-gradient-to-br
@@ -138,6 +147,7 @@ function WeatherCard({
         p-6
         text-white
         shadow-xl
+        shadow-orange-500/20
       "
     >
       <div
@@ -154,12 +164,13 @@ function WeatherCard({
               flex
               items-center
               gap-2
-              text-sm
-              font-bold
+              text-xs
+              font-black
+              tracking-wider
               text-white/80
             "
           >
-            <CloudSun size={18} />
+            <CloudSun size={17} />
 
             LIVE WEATHER
           </div>
@@ -174,26 +185,39 @@ function WeatherCard({
             {destinationName}
           </h3>
 
-          <p className="mt-1 text-white/80">
-            {weatherInfo.label}
+          <p
+            className="
+              mt-1
+              capitalize
+              text-sm
+              text-white/80
+            "
+          >
+            {weather.description}
           </p>
         </div>
 
-        <span className="text-5xl">
-          {weatherInfo.icon}
-        </span>
+        <img
+          src={weatherIconUrl}
+          alt={weather.condition}
+          className="
+            h-20
+            w-20
+            object-contain
+          "
+        />
       </div>
 
       <div
         className="
-          mt-8
+          mt-6
           flex
           items-end
           gap-3
         "
       >
         <Thermometer
-          size={28}
+          size={27}
         />
 
         <span
@@ -204,7 +228,7 @@ function WeatherCard({
           "
         >
           {Math.round(
-            weather.temperature_2m
+            weather.temperature
           )}
           °
         </span>
@@ -220,9 +244,23 @@ function WeatherCard({
         </span>
       </div>
 
+      <p
+        className="
+          mt-2
+          text-sm
+          text-white/75
+        "
+      >
+        Feels like{" "}
+        {Math.round(
+          weather.feelsLike
+        )}
+        °C
+      </p>
+
       <div
         className="
-          mt-8
+          mt-7
           grid
           grid-cols-2
           gap-3
@@ -241,11 +279,12 @@ function WeatherCard({
               flex
               items-center
               gap-2
-              text-sm
+              text-xs
+              font-semibold
               text-white/75
             "
           >
-            <Droplets size={17} />
+            <Droplets size={16} />
 
             Humidity
           </div>
@@ -257,10 +296,7 @@ function WeatherCard({
               font-black
             "
           >
-            {
-              weather.relative_humidity_2m
-            }
-            %
+            {weather.humidity}%
           </p>
         </div>
 
@@ -277,11 +313,12 @@ function WeatherCard({
               flex
               items-center
               gap-2
-              text-sm
+              text-xs
+              font-semibold
               text-white/75
             "
           >
-            <Wind size={17} />
+            <Wind size={16} />
 
             Wind
           </div>
@@ -293,12 +330,10 @@ function WeatherCard({
               font-black
             "
           >
-            {
-              Math.round(
-                weather.wind_speed_10m
-              )
-            }{" "}
-            km/h
+            {Math.round(
+              weather.windSpeed
+            )}{" "}
+            m/s
           </p>
         </div>
       </div>
@@ -310,7 +345,7 @@ function WeatherCard({
           text-white/65
         "
       >
-        Updated from live weather data
+        Live data powered by OpenWeather
       </p>
     </section>
   );
