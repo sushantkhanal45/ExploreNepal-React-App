@@ -28,6 +28,8 @@ import {
 
 import WeatherCard from "../components/WeatherCard";
 
+import ImageCarousel from "../components/ImageCarousel";
+
 function DestinationDetails() {
   const {
     slug,
@@ -192,7 +194,7 @@ function DestinationDetails() {
         )}
       </Link>
 
-      {/* Hero image */}
+      {/* Destination image carousel */}
       <section
         className="
           relative
@@ -201,36 +203,26 @@ function DestinationDetails() {
           overflow-hidden
         "
       >
-        <img
-          src={
-            destination.image
+        <ImageCarousel
+          images={
+            destination.images ||
+            [
+              destination.image,
+            ]
           }
-          alt={
+          destinationName={
             destination.name
           }
-          className="
-            h-full
-            w-full
-            object-cover
-          "
         />
 
+        {/* Destination title overlay */}
         <div
           className="
-            absolute
-            inset-0
-            bg-gradient-to-t
-            from-slate-950
-            via-slate-950/45
-            to-slate-950/10
-          "
-        />
-
-        <div
-          className="
+            pointer-events-none
             absolute
             inset-x-0
             bottom-0
+            z-20
             mx-auto
             max-w-7xl
             px-5
@@ -261,6 +253,7 @@ function DestinationDetails() {
                   text-sm
                   font-bold
                   text-white
+                  shadow-lg
                 "
               >
                 <Navigation
@@ -279,6 +272,7 @@ function DestinationDetails() {
                   font-black
                   tracking-tight
                   text-white
+                  drop-shadow-lg
                   sm:text-7xl
                 "
               >
@@ -308,52 +302,60 @@ function DestinationDetails() {
                 }
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                toggleFavorite(
-                  destination
-                )
-              }
-              className="
-                inline-flex
-                items-center
-                justify-center
-                gap-3
-                rounded-full
-                border
-                border-white/20
-                bg-white/15
-                px-6
-                py-4
-                font-bold
-                text-white
-                backdrop-blur-md
-                transition
-                hover:bg-white/25
-              "
-            >
-              <Heart
-                size={20}
-                fill={
-                  isFavorite
-                    ? "currentColor"
-                    : "none"
-                }
-                className={
-                  isFavorite
-                    ? "text-red-400"
-                    : ""
-                }
-              />
-
-              {isFavorite
-                ? "Saved"
-                : "Save destination"}
-            </button>
           </div>
         </div>
+
+        {/* Favorite button */}
+        <button
+          type="button"
+          onClick={() =>
+            toggleFavorite(
+              destination
+            )
+          }
+          className="
+            absolute
+            bottom-16
+            right-5
+            z-40
+            inline-flex
+            items-center
+            justify-center
+            gap-3
+            rounded-full
+            border
+            border-white/20
+            bg-white/15
+            px-6
+            py-4
+            font-bold
+            text-white
+            shadow-xl
+            backdrop-blur-md
+            transition
+            hover:bg-white/25
+            md:right-8
+            lg:right-[max(2rem,calc((100vw-80rem)/2+2rem))]
+          "
+        >
+          <Heart
+            size={20}
+            fill={
+              isFavorite
+                ? "currentColor"
+                : "none"
+            }
+            className={
+              isFavorite
+                ? "text-red-400"
+                : ""
+            }
+          />
+
+          {isFavorite
+            ? "Saved"
+            : "Save destination"}
+        </button>
       </section>
 
       {/* Details */}

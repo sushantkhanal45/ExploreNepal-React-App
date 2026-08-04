@@ -1,5 +1,17 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  Link,
+} from "react-router-dom";
+
+import {
+  AnimatePresence,
+  motion,
+} from "framer-motion";
+
 import {
   ArrowRight,
   Compass,
@@ -8,30 +20,117 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import destinations from "../data/destinations";
+
 function Hero() {
+  const [
+    currentImage,
+    setCurrentImage,
+  ] = useState(0);
+
+  /*
+    Use selected destination images
+    as the Hero background.
+  */
+  const heroDestinations = [
+    destinations[0],
+    destinations[1],
+    destinations[2],
+    destinations[3],
+    destinations[4],
+    destinations[6],
+  ];
+
+  useEffect(() => {
+    const imageSlider =
+      setInterval(
+        () => {
+          setCurrentImage(
+            (previousImage) =>
+              previousImage ===
+              heroDestinations.length - 1
+                ? 0
+                : previousImage + 1
+          );
+        },
+        5000
+      );
+
+    return () => {
+      clearInterval(
+        imageSlider
+      );
+    };
+  }, [
+    heroDestinations.length,
+  ]);
+
+  const activeDestination =
+    heroDestinations[
+      currentImage
+    ];
+
   return (
     <section
       className="
-        relative min-h-[calc(100vh-73px)]
+        relative
+        min-h-[calc(100vh-73px)]
         overflow-hidden
         bg-slate-950
         text-white
       "
     >
-      {/* Background image */}
-      <div
-        className="
-          absolute inset-0
-          bg-[url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=2200&q=90')]
-          bg-cover
-          bg-center
-        "
-      />
+      {/* Changing background images */}
+      <AnimatePresence
+        initial={false}
+      >
+        <motion.div
+          key={
+            activeDestination.id
+          }
+          initial={{
+            opacity: 0,
+            scale: 1.08,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+          }}
+          exit={{
+            opacity: 0,
+            scale: 1.04,
+          }}
+          transition={{
+            duration: 1.3,
+            ease: "easeInOut",
+          }}
+          className="
+            absolute
+            inset-0
+          "
+        >
+          <img
+            src={
+              activeDestination.image
+            }
+            alt={
+              activeDestination.name
+            }
+            className="
+              h-full
+              w-full
+              object-cover
+              object-center
+            "
+          />
+        </motion.div>
+      </AnimatePresence>
 
       {/* Dark overlay */}
       <div
         className="
-          absolute inset-0
+          absolute
+          inset-0
           bg-gradient-to-r
           from-slate-950
           via-slate-950/85
@@ -42,8 +141,10 @@ function Hero() {
       {/* Bottom gradient */}
       <div
         className="
-          absolute inset-x-0
-          bottom-0 h-48
+          absolute
+          inset-x-0
+          bottom-0
+          h-48
           bg-gradient-to-t
           from-slate-950
           to-transparent
@@ -53,26 +154,37 @@ function Hero() {
       {/* Decorative glow */}
       <div
         className="
-          absolute -right-32
-          top-20 h-80 w-80
+          absolute
+          -right-32
+          top-20
+          h-80
+          w-80
           rounded-full
           bg-orange-500/20
           blur-3xl
         "
       />
 
+      {/* Main Hero content */}
       <div
         className="
-          relative z-10
-          mx-auto flex
+          relative
+          z-10
+          mx-auto
+          flex
           min-h-[calc(100vh-73px)]
           max-w-7xl
           items-center
-          px-5 py-24
+          px-5
+          py-24
           lg:px-8
         "
       >
-        <div className="max-w-3xl">
+        <div
+          className="
+            max-w-3xl
+          "
+        >
           {/* Small badge */}
           <motion.div
             initial={{
@@ -91,16 +203,20 @@ function Hero() {
               items-center
               gap-2
               rounded-full
-              border border-white/15
+              border
+              border-white/15
               bg-white/10
-              px-4 py-2
+              px-4
+              py-2
               text-sm
               font-semibold
               text-orange-200
               backdrop-blur-md
             "
           >
-            <Sparkles size={16} />
+            <Sparkles
+              size={16}
+            />
 
             Discover the beauty of Nepal
           </motion.div>
@@ -130,7 +246,12 @@ function Hero() {
             "
           >
             Every journey
-            <span className="block">
+
+            <span
+              className="
+                block
+              "
+            >
               begins with
             </span>
 
@@ -171,10 +292,12 @@ function Hero() {
               sm:text-lg
             "
           >
-            From the snow-covered Himalayas
-            to peaceful lakes, ancient temples,
-            and vibrant cultures, discover the
-            destinations that make Nepal
+            From the snow-covered
+            Himalayas to peaceful
+            lakes, ancient temples,
+            and vibrant cultures,
+            discover the destinations
+            that make Nepal
             unforgettable.
           </motion.p>
 
@@ -194,7 +317,8 @@ function Hero() {
             }}
             className="
               mt-9
-              flex flex-col
+              flex
+              flex-col
               gap-4
               sm:flex-row
             "
@@ -202,13 +326,15 @@ function Hero() {
             <Link
               to="/explore"
               className="
-                group inline-flex
+                group
+                inline-flex
                 items-center
                 justify-center
                 gap-3
                 rounded-full
                 bg-orange-500
-                px-7 py-4
+                px-7
+                py-4
                 text-sm
                 font-bold
                 text-white
@@ -220,7 +346,9 @@ function Hero() {
                 hover:bg-orange-400
               "
             >
-              <Compass size={19} />
+              <Compass
+                size={19}
+              />
 
               Explore destinations
 
@@ -242,9 +370,11 @@ function Hero() {
                 justify-center
                 gap-3
                 rounded-full
-                border border-white/20
+                border
+                border-white/20
                 bg-white/10
-                px-7 py-4
+                px-7
+                py-4
                 text-sm
                 font-bold
                 text-white
@@ -254,7 +384,9 @@ function Hero() {
                 hover:bg-white/20
               "
             >
-              <Mountain size={19} />
+              <Mountain
+                size={19}
+              />
 
               View featured places
             </a>
@@ -315,7 +447,7 @@ function Hero() {
                   sm:text-3xl
                 "
               >
-                14+
+                8
               </p>
 
               <p
@@ -356,8 +488,22 @@ function Hero() {
         </div>
       </div>
 
-      {/* Location label */}
-      <div
+      {/* Current location label */}
+      <motion.div
+        key={
+          activeDestination.id
+        }
+        initial={{
+          opacity: 0,
+          y: 10,
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 0.5,
+        }}
         className="
           absolute
           bottom-7
@@ -367,9 +513,11 @@ function Hero() {
           items-center
           gap-2
           rounded-full
-          border border-white/10
-          bg-black/20
-          px-4 py-2
+          border
+          border-white/10
+          bg-black/30
+          px-4
+          py-2
           text-xs
           text-white/80
           backdrop-blur-md
@@ -378,10 +526,63 @@ function Hero() {
       >
         <MapPin
           size={15}
-          className="text-orange-400"
+          className="
+            text-orange-400
+          "
         />
 
-        Nepal, South Asia
+        {
+          activeDestination.name
+        },
+        {" "}
+        Nepal
+      </motion.div>
+
+      {/* Image progress indicators */}
+      <div
+        className="
+          absolute
+          bottom-8
+          left-1/2
+          z-10
+          flex
+          -translate-x-1/2
+          items-center
+          gap-2
+          lg:hidden
+        "
+      >
+        {heroDestinations.map(
+          (
+            destination,
+            index
+          ) => (
+            <span
+              key={
+                destination.id
+              }
+              className={`
+                h-1.5
+                rounded-full
+                transition-all
+                duration-500
+
+                ${
+                  index ===
+                  currentImage
+                    ? `
+                      w-8
+                      bg-orange-400
+                    `
+                    : `
+                      w-1.5
+                      bg-white/50
+                    `
+                }
+              `}
+            />
+          )
+        )}
       </div>
     </section>
   );

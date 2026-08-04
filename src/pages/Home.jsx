@@ -2,6 +2,8 @@ import { ArrowRight, Compass } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import Hero from "../components/Hero";
+// import DestinationCarousel from "../components/DestinationCarousel";
+
 import DestinationCard from "../components/DestinationCard";
 import Footer from "../components/Footer";
 
@@ -23,6 +25,7 @@ function Home() {
     >
       {/* Hero section */}
       <Hero />
+      {/* <DestinationCarousel /> */}
 
       {/* Featured destinations */}
       <section
